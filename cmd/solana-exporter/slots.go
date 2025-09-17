@@ -417,7 +417,7 @@ func (c *SlotWatcher) processLeaderSlotsForValidator(ctx context.Context, startS
 		return
 	}
 
-	leaderSlots := leaderSchedule[validatorNodekey]
+	leaderSlots := SelectFromSchedule(leaderSchedule, startSlot, endSlot)[validatorNodekey]
 	c.logger.Infof("Fetched leaderSlots for validator %s: %v", validatorNodekey, leaderSlots)
 	if len(leaderSlots) == 0 {
 		c.logger.Warnf("No leader slots for validator %s in [%v -> %v] (expected nonzero if scheduled)", validatorNodekey, startSlot, endSlot)
