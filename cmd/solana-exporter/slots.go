@@ -417,15 +417,16 @@ func (c *SlotWatcher) processLeaderSlotsForValidator(ctx context.Context, startS
 		return
 	}
 
-	leaderSlots := SelectFromSchedule(leaderSchedule, startSlot, endSlot)[validatorNodekey]
+	leaderSlots := leaderSchedule[validatorNodekey]
+	slotsInRange := SelectFromSchedule(leaderSchedule, startSlot, endSlot)[validatorNodekey]
 	c.logger.Infof("Fetched leaderSlots for validator %s: %v", validatorNodekey, leaderSlots)
-	if len(leaderSlots) == 0 {
+	if len(slotsInRange) == 0 {
 		c.logger.Warnf("No leader slots for validator %s in [%v -> %v] (expected nonzero if scheduled)", validatorNodekey, startSlot, endSlot)
 	}
 	c.logger.Infof("Setting AssignedLeaderSlotsGauge to %d (len(leaderSlots)) for validator %s", len(leaderSlots), validatorNodekey)
 	c.AssignedLeaderSlotsGauge.Set(float64(len(leaderSlots)))
 
-	for _, slot := range leaderSlots {
+	for _, slot := range slotsInRange {
 		if slot > endSlot {
 			continue // skip slots beyond the allowed range
 		}
